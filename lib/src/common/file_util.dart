@@ -11,8 +11,18 @@ class FileUtil {
   /// For example: If file is located at <root-dir>/assets/filename.txt then fileAssetLocation is
   /// assets/filename.txt.
   Future<Uint8List> loadFileAsBytes(String fileAssetLocation) async {
-    final rawAssetFile = await rootBundle.load('$fileAssetLocation');
-    final rawBytes = rawAssetFile.buffer.asUint8List();
+    final rawBytes;
+    if (await File(
+            '/data/user/0/com.example.candrink/app_flutter/assets/candrink_models.tflite')
+        .exists()) {
+      final file = File(
+          '/data/user/0/com.example.candrink/app_flutter/assets/candrink_models.tflite');
+      final fileRaw = await file.readAsBytes();
+      rawBytes = fileRaw.buffer.asUint8List();
+    } else {
+      final rawAssetFile = await rootBundle.load('$fileAssetLocation');
+      rawBytes = rawAssetFile.buffer.asUint8List();
+    }
     return rawBytes;
   }
 
@@ -26,7 +36,16 @@ class FileUtil {
   /// For example: If file is located at <root-dir>/assets/filename.txt then fileAssetLocation is
   /// assets/filename.txt.
   static Future<List<String>> loadLabels(String fileAssetLocation) async {
-    final fileString = await rootBundle.loadString('$fileAssetLocation');
+    final fileString;
+    if (await File(
+            '/data/user/0/com.example.candrink/app_flutter/assets/candrink_labels.txt')
+        .exists()) {
+      final file = File(
+          '/data/user/0/com.example.candrink/app_flutter/assets/candrink_labels.txt');
+      fileString = await file.readAsString();
+    } else {
+      fileString = await rootBundle.loadString('$fileAssetLocation');
+    }
     return labelListFromString(fileString);
   }
 
